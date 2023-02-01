@@ -26,6 +26,7 @@ pub fn angular_dist_score(
     crate::utils::check_float(z_true)?;
     crate::utils::check_float(a_pred)?;
     crate::utils::check_float(z_pred)?;
+    crate::utils::check_lengths(&[a_true, z_true, a_pred, z_pred])?;
 
     Ok(a_true
         .iter()

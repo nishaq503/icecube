@@ -6,6 +6,15 @@ pub fn check_float(arr: &[f32]) -> Result<(), String> {
     }
 }
 
+pub fn check_lengths(arrays: &[&[f32]]) -> Result<(), String> {
+    let l = arrays[0].len();
+    if arrays.iter().any(|arr| arr.len() != l) {
+        Err("All slices must have the same length.".to_string())
+    } else {
+        Ok(())
+    }
+}
+
 /// Clips a given f32 value to the [-1., 1.] range.
 pub fn clip(val: f32) -> f32 {
     if val < -1. {
