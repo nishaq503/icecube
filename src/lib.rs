@@ -1,6 +1,7 @@
 pub mod dataset;
 pub mod geometry;
 pub mod utils;
+pub mod vectors;
 
 use pyo3::prelude::*;
 
