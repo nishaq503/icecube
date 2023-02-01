@@ -1,4 +1,5 @@
 pub mod dataset;
+pub mod geometry;
 pub mod utils;
 
 use pyo3::prelude::*;
