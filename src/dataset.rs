@@ -2,10 +2,7 @@ use std::path::{Path, PathBuf};
 
 #[derive(Debug)]
 pub struct DataSet {
-    root: PathBuf,
-    train: PathBuf,
     train_batches: Vec<PathBuf>,
-    test: PathBuf,
     test_batches: Vec<PathBuf>,
     train_meta: PathBuf,
     sensor_geometry: PathBuf,
@@ -86,7 +83,7 @@ impl DataSet {
         };
 
         let sample_submission = {
-            let mut sample_submission = root.clone();
+            let mut sample_submission = root;
             sample_submission.push("sample_submission.parquet");
             assert!(
                 sample_submission.exists(),
@@ -96,10 +93,7 @@ impl DataSet {
         };
 
         Ok(Self {
-            root,
-            train,
             train_batches,
-            test,
             test_batches,
             train_meta,
             sensor_geometry,
