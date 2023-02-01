@@ -1,3 +1,6 @@
+pub mod dataset;
+pub mod utils;
+
 use pyo3::prelude::*;
 
 /// Formats the sum of two numbers as string.
