@@ -15,11 +15,11 @@ impl std::fmt::Display for Vector {
             System::Cartesian => {
                 let [x, y, z] = self.values;
                 write!(f, "Cartesian: ({x:.6}, {y:.6}, {z:.6})")
-            },
+            }
             System::Polar => {
                 let [_, azimuth, zenith] = self.values;
                 write!(f, "Polar: ({azimuth:.6}, {zenith:.6})")
-            },
+            }
         }
     }
 }
@@ -51,12 +51,18 @@ impl Vector {
         let r_sq = x * x + y * y + z * z;
         if r_sq == 0. {
             Err("Cannot have vector with zero magnitude".to_string())
+        } else if r_sq == 1. {
+            Ok(Self::new_cartesian_unchecked(x, y, z))
         } else {
             let r = r_sq.sqrt();
-            Ok(Self {
-                values: [x / r, y / r, z / r],
-                system: System::Cartesian,
-            })
+            Ok(Self::new_cartesian_unchecked(x / r, y / r, z / r))
+        }
+    }
+
+    fn new_cartesian_unchecked(x: f32, y: f32, z: f32) -> Self {
+        Self {
+            values: [x, y, z],
+            system: System::Cartesian,
         }
     }
 
@@ -66,7 +72,7 @@ impl Vector {
     }
 
     /// Convert the `Vector` to polar coordinates.
-    pub fn to_polar(mut self) -> Self {
+    pub fn to_polar(self) -> Self {
         match self.system {
             System::Cartesian => {
                 let [x, y, z] = self.values;
@@ -80,8 +86,7 @@ impl Vector {
 
                 let azimuth = libm::acosf(z);
 
-                self = Self::new_polar(azimuth, zenith);
-                self
+                Self::new_polar(azimuth, zenith)
             }
             System::Polar => self,
         }
@@ -93,7 +98,7 @@ impl Vector {
     }
 
     /// Convert the `Vector` to cartesian coordinates.
-    pub fn to_cartesian(mut self) -> Self {
+    pub fn to_cartesian(self) -> Self {
         match self.system {
             System::Cartesian => self,
             System::Polar => {
@@ -101,13 +106,11 @@ impl Vector {
                 let [sin_azimuth, sin_zenith] = [libm::sinf(azimuth), libm::sinf(zenith)];
                 let [cos_azimuth, cos_zenith] = [libm::cosf(azimuth), libm::cosf(zenith)];
 
-                self.values = [
+                Self::new_cartesian_unchecked(
                     sin_azimuth * cos_zenith,
                     sin_azimuth * sin_zenith,
                     cos_azimuth,
-                ];
-                self.system = System::Cartesian;
-                self
+                )
             }
         }
     }
