@@ -40,15 +40,7 @@ pub fn angular_dist_score(
         .map(|(((((((sa1, ca1), sz1), cz1), sa2), ca2), sz2), cz2)| {
             sz1 * sz2 * (ca1 * ca2 + sa1 * sa2) + (cz1 * cz2)
         })
-        .map(|f| {
-            if f < -1. {
-                -1.
-            } else if f > 1. {
-                1.
-            } else {
-                f
-            }
-        })
+        .map(crate::utils::clip)
         .map(libm::acosf)
         .map(f32::abs)
         .sum::<f32>()

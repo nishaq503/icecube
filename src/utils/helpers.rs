@@ -5,3 +5,14 @@ pub fn check_float(arr: &[f32]) -> Result<(), String> {
         Ok(())
     }
 }
+
+/// Clips a given f32 value to the [-1., 1.] range.
+pub fn clip(val: f32) -> f32 {
+    if val < -1. {
+        -1.
+    } else if val > 1. {
+        1.
+    } else {
+        val
+    }
+}
