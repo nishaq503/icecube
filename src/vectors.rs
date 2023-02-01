@@ -60,8 +60,7 @@ impl Vector {
 
                 let azimuth = libm::acosf(z);
 
-                self.values = [1., azimuth, zenith];
-                self.system = System::Cartesian;
+                self = Self::new_polar(azimuth, zenith);
                 self
             }
             System::Polar => self,
@@ -82,7 +81,7 @@ impl Vector {
                     sin_azimuth * sin_zenith,
                     cos_azimuth,
                 ];
-                self.system = System::Polar;
+                self.system = System::Cartesian;
                 self
             }
         }
