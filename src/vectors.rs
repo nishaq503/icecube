@@ -3,10 +3,25 @@
 /// Vectors are always normalized when created and inputs with zero magnitude
 /// are not allowed. Vectors can be converted between the two coordinate systems
 /// and they know which coordinate system they are in.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Vector {
     values: [f32; 3], // [x, y, z] or [_, azimuth, zenith]
     system: System,
+}
+
+impl std::fmt::Display for Vector {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self.system {
+            System::Cartesian => {
+                let [x, y, z] = self.values;
+                write!(f, "Cartesian: ({x:.6}, {y:.6}, {z:.6})")
+            },
+            System::Polar => {
+                let [_, azimuth, zenith] = self.values;
+                write!(f, "Polar: ({azimuth:.6}, {zenith:.6})")
+            },
+        }
+    }
 }
 
 impl Vector {
@@ -88,7 +103,7 @@ impl Vector {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 enum System {
     Cartesian,
     Polar,
