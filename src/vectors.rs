@@ -1,10 +1,16 @@
+/// A 3d vector either in polar or cartesian coordinates.
+///
+/// Vectors are always normalized when created and inputs with zero magnitude
+/// are not allowed. Vectors can be converted between the two coordinate systems
+/// and they know which coordinate system they are in.
 #[derive(Debug, Clone)]
 pub struct Vector {
-    values: [f32; 3], // [x, y, z] or [magnitude, azimuth, zenith]
+    values: [f32; 3], // [x, y, z] or [_, azimuth, zenith]
     system: System,
 }
 
 impl Vector {
+    /// Create a new `Vector` in polar coordinates.
     pub fn new_polar(azimuth: f32, zenith: f32) -> Self {
         let azimuth = azimuth % (2. * std::f32::consts::PI);
 
@@ -21,6 +27,11 @@ impl Vector {
         }
     }
 
+    /// Create a new `Vector` in cartesian coordinates.
+    ///
+    /// # Errors
+    ///
+    /// * If the magnitude of the given vector would be zero.
     pub fn new_cartesian(x: f32, y: f32, z: f32) -> Result<Self, String> {
         let r_sq = x * x + y * y + z * z;
         if r_sq == 0. {
@@ -34,10 +45,7 @@ impl Vector {
         }
     }
 
-    pub fn system(&self) -> System {
-        self.system
-    }
-
+    /// Convert the `Vector` to polar coordinates.
     pub fn to_polar(mut self) -> Self {
         match self.system {
             System::Cartesian => {
@@ -60,15 +68,20 @@ impl Vector {
         }
     }
 
+    /// Convert the `Vector` to cartesian coordinates.
     pub fn to_cartesian(mut self) -> Self {
         match self.system {
             System::Cartesian => self,
             System::Polar => {
-                let [_, a, z] = self.values;
-                let [sa, sz] = [libm::sinf(a), libm::sinf(z)];
-                let [ca, cz] = [libm::cosf(a), libm::cosf(z)];
-                
-                self.values = [sa * cz, sa * sz, ca];
+                let [_, azimuth, zenith] = self.values;
+                let [sin_azimuth, sin_zenith] = [libm::sinf(azimuth), libm::sinf(zenith)];
+                let [cos_azimuth, cos_zenith] = [libm::cosf(azimuth), libm::cosf(zenith)];
+
+                self.values = [
+                    sin_azimuth * cos_zenith,
+                    sin_azimuth * sin_zenith,
+                    cos_azimuth,
+                ];
                 self.system = System::Polar;
                 self
             }
@@ -76,8 +89,8 @@ impl Vector {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-pub enum System {
+#[derive(Debug, Clone)]
+enum System {
     Cartesian,
     Polar,
 }
