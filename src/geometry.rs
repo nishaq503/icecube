@@ -1,6 +1,6 @@
 /// Calculate the MAE of the angular distance between two directions.
 ///
-/// Source: https://www.kaggle.com/code/sohier/mean-angular-error
+/// Source: <https://www.kaggle.com/code/sohier/mean-angular-error>
 ///
 /// The two vectors are first converted to cartesian unit vectors, and then
 /// their scalar product is computed, which is equal to the cosine of the angle
@@ -15,7 +15,13 @@
 /// * `z_pred`: predicted zenith values in radians
 ///
 /// # Returns
-///     mean over the angular distances in radian
+///
+/// * mean of the angular distances in radians
+///
+/// # Errors:
+///
+/// * If any given f32 value is nan or infinite.
+/// * If the slices are of different lengths.
 pub fn angular_dist_score(
     a_true: &[f32],
     z_true: &[f32],

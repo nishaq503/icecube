@@ -46,7 +46,7 @@ impl Vector {
     ///
     /// # Errors
     ///
-    /// * If the magnitude of the given vector would be zero.
+    /// * If the magnitude of the given `Vector` would be zero.
     pub fn new_cartesian(x: f32, y: f32, z: f32) -> Result<Self, String> {
         let r_sq = x * x + y * y + z * z;
         if r_sq == 0. {
@@ -115,11 +115,11 @@ impl Vector {
         }
     }
 
-    /// Computes the angular distance between two directions.
-    /// 
+    /// Computes the angular distance between two `Vector`s.
+    ///
     /// Converts the two vectors to cartesian unit vectors and computes their
-    /// dot-product, which is equal to the cosine of the distance angle between
-    /// them. Returns the arccos of the dot-product.
+    /// dot-product, which is equal to the cosine of the angle between them.
+    /// Returns the arccos of the dot-product.
     pub fn angular_distance(&self, other: &Self) -> f32 {
         let [x1, y1, z1] = self.as_cartesian().values;
         let [x2, y2, z2] = other.as_cartesian().values;
