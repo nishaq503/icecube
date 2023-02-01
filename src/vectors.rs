@@ -3,7 +3,7 @@
 /// Vectors are always normalized when created and inputs with zero magnitude
 /// are not allowed. Vectors can be converted between the two coordinate systems
 /// and they know which coordinate system they are in.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Vector {
     values: [f32; 3], // [x, y, z] or [_, azimuth, zenith]
     system: System,
@@ -60,6 +60,11 @@ impl Vector {
         }
     }
 
+    /// Returns a new `Vector` in polar coordinates.
+    pub fn as_polar(&self) -> Self {
+        self.clone().to_polar()
+    }
+
     /// Convert the `Vector` to polar coordinates.
     pub fn to_polar(mut self) -> Self {
         match self.system {
@@ -82,6 +87,11 @@ impl Vector {
         }
     }
 
+    /// Returns a new `Vector` in cartesian coordinates.
+    pub fn as_cartesian(&self) -> Self {
+        self.clone().to_cartesian()
+    }
+
     /// Convert the `Vector` to cartesian coordinates.
     pub fn to_cartesian(mut self) -> Self {
         match self.system {
@@ -101,9 +111,21 @@ impl Vector {
             }
         }
     }
+
+    /// Computes the angular distance between two directions.
+    /// 
+    /// Converts the two vectors to cartesian unit vectors and computes their
+    /// dot-product, which is equal to the cosine of the distance angle between
+    /// them. Returns the arccos of the dot-product.
+    pub fn angular_distance(&self, other: &Self) -> f32 {
+        let [x1, y1, z1] = self.as_cartesian().values;
+        let [x2, y2, z2] = other.as_cartesian().values;
+        let p = crate::utils::clip(x1 * x2 + y1 * y2 + z1 * z2);
+        libm::cosf(p).abs()
+    }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum System {
     Cartesian,
     Polar,
