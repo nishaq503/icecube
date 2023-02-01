@@ -16,7 +16,7 @@ impl Vector {
 
         let zenith = zenith % (2. * std::f32::consts::PI);
         let zenith = if zenith >= std::f32::consts::PI {
-            zenith - std::f32::consts::PI
+            2. * std::f32::consts::PI - zenith
         } else {
             zenith
         };
