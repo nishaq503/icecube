@@ -1,3 +1,7 @@
+use std::f32::consts::{FRAC_PI_2, PI};
+
+use libm::{acosf, cosf, sinf};
+
 /// A 3d vector either in polar or cartesian coordinates.
 ///
 /// Vectors are always normalized when created and inputs with zero magnitude
@@ -27,11 +31,11 @@ impl std::fmt::Display for Vector {
 impl Vector {
     /// Create a new `Vector` in polar coordinates.
     pub fn new_polar(azimuth: f32, zenith: f32) -> Self {
-        let azimuth = azimuth % (2. * std::f32::consts::PI);
+        let azimuth = azimuth % (2. * PI);
 
-        let zenith = zenith % (2. * std::f32::consts::PI);
-        let zenith = if zenith >= std::f32::consts::PI {
-            2. * std::f32::consts::PI - zenith
+        let zenith = zenith % (2. * PI);
+        let zenith = if zenith >= PI {
+            2. * PI - zenith
         } else {
             zenith
         };
@@ -80,16 +84,12 @@ impl Vector {
 
                 let xy_sq = x * x + y * y;
                 let zenith = if xy_sq != 0. {
-                    libm::acosf(x / xy_sq.sqrt())
+                    acosf(x / xy_sq.sqrt())
                 } else {
-                    std::f32::consts::FRAC_PI_2
+                    FRAC_PI_2
                 };
 
-                let azimuth = if y < 0. {
-                    2. * std::f32::consts::PI - libm::acosf(z)
-                } else {
-                    libm::acosf(z)
-                };
+                let azimuth = if y < 0. { 2. * PI - acosf(z) } else { acosf(z) };
 
                 Self::new_polar(azimuth, zenith)
             }
@@ -108,8 +108,8 @@ impl Vector {
             System::Cartesian => self,
             System::Polar => {
                 let [_, azimuth, zenith] = self.values;
-                let [sin_azimuth, sin_zenith] = [libm::sinf(azimuth), libm::sinf(zenith)];
-                let [cos_azimuth, cos_zenith] = [libm::cosf(azimuth), libm::cosf(zenith)];
+                let [sin_azimuth, sin_zenith] = [sinf(azimuth), sinf(zenith)];
+                let [cos_azimuth, cos_zenith] = [cosf(azimuth), cosf(zenith)];
 
                 Self::new_cartesian_unchecked(
                     sin_azimuth * cos_zenith,
@@ -129,7 +129,7 @@ impl Vector {
         let [x1, y1, z1] = self.as_cartesian().values;
         let [x2, y2, z2] = other.as_cartesian().values;
         let p = crate::utils::clip(x1 * x2 + y1 * y2 + z1 * z2);
-        libm::cosf(p).abs()
+        cosf(p).abs()
     }
 
     pub fn mean(vectors: &[Self]) -> Result<Self, String> {
