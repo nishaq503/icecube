@@ -2,11 +2,14 @@ use std::f32::consts::{FRAC_PI_2, PI};
 
 use libm::{acosf, cosf, sinf};
 
+/// PI * 2.
+const PI_2: f32 = PI + PI;
+
 /// A 3d vector either in polar or cartesian coordinates.
 ///
 /// Vectors are always normalized when created and inputs with zero magnitude
-/// are not allowed. Vectors can be converted between the two coordinate systems
-/// and they know which coordinate system they are in.
+/// are not allowed (for now). Vectors can be converted between the two
+/// coordinate systems and they know which coordinate system they are in.
 #[derive(Debug, Clone)]
 pub struct Vector {
     values: [f32; 3], // [x, y, z] or [_, azimuth, zenith]
@@ -31,15 +34,15 @@ impl std::fmt::Display for Vector {
 impl Vector {
     /// Create a new `Vector` in polar coordinates.
     pub fn new_polar(azimuth: f32, zenith: f32) -> Self {
-        let azimuth = azimuth % (2. * PI);
+        let azimuth = azimuth % PI_2;
 
-        let zenith = zenith % (2. * PI);
-        let zenith = if zenith >= PI {
-            2. * PI - zenith
-        } else {
-            zenith
-        };
+        let zenith = zenith % PI_2;
+        let zenith = if zenith < PI { zenith } else { PI_2 - zenith };
 
+        Self::new_polar_unchecked(azimuth, zenith)
+    }
+
+    fn new_polar_unchecked(azimuth: f32, zenith: f32) -> Self {
         Self {
             values: [1., azimuth, zenith],
             system: System::Polar,
@@ -89,9 +92,9 @@ impl Vector {
                     FRAC_PI_2
                 };
 
-                let azimuth = if y < 0. { 2. * PI - acosf(z) } else { acosf(z) };
+                let azimuth = if y < 0. { PI_2 - acosf(z) } else { acosf(z) };
 
-                Self::new_polar(azimuth, zenith)
+                Self::new_polar_unchecked(azimuth, zenith)
             }
             System::Polar => self,
         }
