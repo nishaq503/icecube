@@ -19,6 +19,10 @@ TODO
 
 ### Papers
 
-* [Measurement of the cosmic ray energy spectrum with IceTop-73 (aartsen2013measurement)](https://arxiv.org/pdf/1307.3795.pdf)
-* [The IceCube Neutrino Observatory: Instrumentation and Online Systems (aartsen2017icecube)](https://arxiv.org/pdf/1612.05093.pdf)
-* [Deep-learning-based reconstruction of the neutrino direction and energy for in-ice radio detectors (glaser2023deep)](https://arxiv.org/pdf/2205.15872.pdf)
+* Measurement of the cosmic ray energy spectrum with IceTop-73
+  * [aartsen2013measurement](https://arxiv.org/pdf/1307.3795.pdf)
+* The IceCube Neutrino Observatory: Instrumentation and Online Systems
+  * [aartsen2017icecube](https://arxiv.org/pdf/1612.05093.pdf)
+* Deep-learning-based reconstruction of the neutrino direction and energy for in-ice radio detectors
+  * [glaser2023deep](https://arxiv.org/pdf/2205.15872.pdf)
+* ...
