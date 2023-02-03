@@ -50,6 +50,7 @@ impl Vector {
     pub fn new_cartesian(x: f32, y: f32, z: f32) -> Result<Self, String> {
         let r_sq = x * x + y * y + z * z;
         if r_sq == 0. {
+            // TODO: Deal with zero vectors and remove the Result return type
             Err("Cannot have vector with zero magnitude".to_string())
         } else if r_sq == 1. {
             Ok(Self::new_cartesian_unchecked(x, y, z))
@@ -84,7 +85,11 @@ impl Vector {
                     std::f32::consts::FRAC_PI_2
                 };
 
-                let azimuth = libm::acosf(z);
+                let azimuth = if y < 0. {
+                    2. * std::f32::consts::PI - libm::acosf(z)
+                } else {
+                    libm::acosf(z)
+                };
 
                 Self::new_polar(azimuth, zenith)
             }
@@ -125,6 +130,17 @@ impl Vector {
         let [x2, y2, z2] = other.as_cartesian().values;
         let p = crate::utils::clip(x1 * x2 + y1 * y2 + z1 * z2);
         libm::cosf(p).abs()
+    }
+
+    pub fn mean(vectors: &[Self]) -> Result<Self, String> {
+        let [x, y, z] = vectors
+            .iter()
+            .map(|v| v.as_cartesian().values)
+            .fold([0., 0., 0.], |[x, y, z], [x_, y_, z_]| {
+                [x + x_, y + y_, z + z_]
+            });
+        let n = vectors.len() as f32;
+        Self::new_cartesian(x / n, y / n, z / n)
     }
 }
 
