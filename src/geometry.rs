@@ -22,12 +22,7 @@
 ///
 /// * If any given f32 value is nan or infinite.
 /// * If the slices are of different lengths.
-pub fn angular_dist_score(
-    a_true: &[f32],
-    z_true: &[f32],
-    a_pred: &[f32],
-    z_pred: &[f32],
-) -> Result<f32, String> {
+pub fn angular_dist_score(a_true: &[f32], z_true: &[f32], a_pred: &[f32], z_pred: &[f32]) -> Result<f32, String> {
     crate::utils::check_float(a_true)?;
     crate::utils::check_float(z_true)?;
     crate::utils::check_float(a_pred)?;
@@ -44,9 +39,7 @@ pub fn angular_dist_score(
         .zip(a_pred.iter().map(|&f| libm::cosf(f)))
         .zip(z_pred.iter().map(|&f| libm::sinf(f)))
         .zip(z_pred.iter().map(|&f| libm::cosf(f)))
-        .map(|(((((((sa1, ca1), sz1), cz1), sa2), ca2), sz2), cz2)| {
-            sz1 * sz2 * (ca1 * ca2 + sa1 * sa2) + (cz1 * cz2)
-        })
+        .map(|(((((((sa1, ca1), sz1), cz1), sa2), ca2), sz2), cz2)| sz1 * sz2 * (ca1 * ca2 + sa1 * sa2) + (cz1 * cz2))
         .map(crate::utils::clip)
         .map(libm::acosf)
         .map(f32::abs)

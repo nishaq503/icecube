@@ -20,15 +20,11 @@ impl std::fmt::Display for DataSet {
         let train_meta = get_file_name(&self.train_meta).map_err(|reason| panic!("{reason}"))?;
         writeln!(f, "    train_meta: {train_meta}").map_err(|reason| panic!("{reason}"))?;
 
-        let sensor_geometry =
-            get_file_name(&self.sensor_geometry).map_err(|reason| panic!("{reason}"))?;
-        writeln!(f, "    sensor_geometry: {sensor_geometry}")
-            .map_err(|reason| panic!("{reason}"))?;
+        let sensor_geometry = get_file_name(&self.sensor_geometry).map_err(|reason| panic!("{reason}"))?;
+        writeln!(f, "    sensor_geometry: {sensor_geometry}").map_err(|reason| panic!("{reason}"))?;
 
-        let sample_submission =
-            get_file_name(&self.sample_submission).map_err(|reason| panic!("{reason}"))?;
-        write!(f, "    sample_submission: {sample_submission}")
-            .map_err(|reason| panic!("{reason}"))?;
+        let sample_submission = get_file_name(&self.sample_submission).map_err(|reason| panic!("{reason}"))?;
+        write!(f, "    sample_submission: {sample_submission}").map_err(|reason| panic!("{reason}"))?;
 
         Ok(())
     }
@@ -75,20 +71,14 @@ impl DataSet {
         let sensor_geometry = {
             let mut sensor_geometry = root.clone();
             sensor_geometry.push("sensor_geometry.csv");
-            assert!(
-                sensor_geometry.exists(),
-                "File not found: {sensor_geometry:?}"
-            );
+            assert!(sensor_geometry.exists(), "File not found: {sensor_geometry:?}");
             sensor_geometry
         };
 
         let sample_submission = {
             let mut sample_submission = root;
             sample_submission.push("sample_submission.parquet");
-            assert!(
-                sample_submission.exists(),
-                "File not found: {sample_submission:?}"
-            );
+            assert!(sample_submission.exists(), "File not found: {sample_submission:?}");
             sample_submission
         };
 
@@ -99,6 +89,14 @@ impl DataSet {
             sensor_geometry,
             sample_submission,
         })
+    }
+
+    pub fn train_batch_paths(&self) -> &[PathBuf] {
+        &self.train_batches
+    }
+
+    pub fn test_batch_paths(&self) -> &[PathBuf] {
+        &self.test_batches
     }
 }
 

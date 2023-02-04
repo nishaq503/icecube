@@ -114,11 +114,7 @@ impl Vector {
                 let [sin_azimuth, sin_zenith] = [sinf(azimuth), sinf(zenith)];
                 let [cos_azimuth, cos_zenith] = [cosf(azimuth), cosf(zenith)];
 
-                Self::new_cartesian_unchecked(
-                    sin_azimuth * cos_zenith,
-                    sin_azimuth * sin_zenith,
-                    cos_azimuth,
-                )
+                Self::new_cartesian_unchecked(sin_azimuth * cos_zenith, sin_azimuth * sin_zenith, cos_azimuth)
             }
         }
     }
@@ -139,9 +135,7 @@ impl Vector {
         let [x, y, z] = vectors
             .iter()
             .map(|v| v.as_cartesian().values)
-            .fold([0., 0., 0.], |[x, y, z], [x_, y_, z_]| {
-                [x + x_, y + y_, z + z_]
-            });
+            .fold([0., 0., 0.], |[x, y, z], [x_, y_, z_]| [x + x_, y + y_, z + z_]);
         let n = vectors.len() as f32;
         Self::new_cartesian(x / n, y / n, z / n)
     }
