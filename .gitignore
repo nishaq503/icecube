@@ -1,6 +1,7 @@
 /target
 Cargo.lock
 /references
+/wheels/*.whl
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
