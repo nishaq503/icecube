@@ -14,3 +14,5 @@ COPY icecube ${CRATE_DIR}/icecube
 RUN rm -rf ${CRATE_DIR}/icecube/__pycache__
 RUN rm -rf ${CRATE_DIR}/icecube/*.so
 RUN cd ${CRATE_DIR} && maturin build --release --strip && cd ..
+
+CMD ["cp", "-r", "/icecube/target/wheels", "/wheels/."]
