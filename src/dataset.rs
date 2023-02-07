@@ -5,6 +5,7 @@ pub struct DataSet {
     train_batches: Vec<PathBuf>,
     test_batches: Vec<PathBuf>,
     train_meta: PathBuf,
+    test_meta: PathBuf,
     sensor_geometry: PathBuf,
     sample_submission: PathBuf,
 }
@@ -53,6 +54,13 @@ impl DataSet {
         };
         let train_batches = get_batch_paths(&train)?;
 
+        let train_meta = {
+            let mut train_meta = root.clone();
+            train_meta.push("train_meta.parquet");
+            assert!(train_meta.exists(), "File not found: {train_meta:?}");
+            train_meta
+        };
+
         let test = {
             let mut test = root.clone();
             test.push("test");
@@ -61,11 +69,11 @@ impl DataSet {
         };
         let test_batches = get_batch_paths(&test)?;
 
-        let train_meta = {
-            let mut train_meta = root.clone();
-            train_meta.push("train_meta.parquet");
-            assert!(train_meta.exists(), "File not found: {train_meta:?}");
-            train_meta
+        let test_meta = {
+            let mut test_meta = root.clone();
+            test_meta.push("test_meta.parquet");
+            assert!(test_meta.exists(), "File not found: {test_meta:?}");
+            test_meta
         };
 
         let sensor_geometry = {
@@ -86,6 +94,7 @@ impl DataSet {
             train_batches,
             test_batches,
             train_meta,
+            test_meta,
             sensor_geometry,
             sample_submission,
         })
@@ -97,6 +106,10 @@ impl DataSet {
 
     pub fn test_batch_paths(&self) -> &[PathBuf] {
         &self.test_batches
+    }
+
+    pub fn get_meta_paths(&self) -> [&PathBuf; 2] {
+        [&self.train_meta, &self.test_meta]
     }
 }
 

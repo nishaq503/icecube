@@ -1,6 +1,4 @@
-use std::fs::File;
-
-use parquet::file::reader::{FileReader, SerializedFileReader};
+use polars::prelude::*;
 
 use icecube::*;
 
@@ -23,6 +21,7 @@ struct Event {
 }
 
 impl Event {
+    #[allow(dead_code)]
     fn from_str(s: &str) -> Self {
         let (_, s) = s.split_at(1);
         let (s, _) = s.split_at(s.len() - 1);
@@ -46,23 +45,21 @@ impl Event {
 }
 
 fn main() -> std::io::Result<()> {
-    let dataset = dataset::DataSet::new(None)?;
-    println!("Parsed Dataset: {dataset}");
+    let data = dataset::DataSet::new(None)?;
+    println!("Parsed Dataset: {data}");
 
-    let file = File::open(&dataset.train_batch_paths()[0]).unwrap();
-    let reader = SerializedFileReader::new(file).unwrap();
-    // let metadata = reader.metadata();
-    let row_group_reader = reader.get_row_group(0).unwrap();
+    let path = &data.train_batch_paths()[0];
+    println!("Using path {path:?}");
 
-    let events = row_group_reader.get_row_iter(None).unwrap()
-        .map(|row| {
-            let mut row_str = format!("{row}");
-            row_str.pop();
-            Event::from_str(&row_str[1..])
-        })
-        .collect::<Vec<_>>();
-
-    println!("Got {} events.", events.len());
+    let df = LazyFrame::scan_parquet(path, Default::default()).unwrap();
+    let events = df.groupby([col("event_id")]).agg([
+        col("charge").mean().alias("charge_mean"),
+        col("time").min().alias("time_min"),
+        col("time").max().alias("time_max"),
+        col("sensor_id").count().alias("sensor_id_count"),
+        col("auxiliary").first().alias("auxiliary"),
+    ]).collect().unwrap();
+    println!("{events:?}");
 
     Ok(())
 }
